@@ -258,7 +258,7 @@ int main(int argc, char* argv[])
                     addresses[1] = find_addresses(input, 1085642)[0]; //  768000
                     cout << "Found " << "1085642" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
 
-                    addresses[0] = find_addresses(input, 1023751)[0]; //  691200
+                    addresses[0] = find_addresses(input, 1023751)[7]; //  691200
                     cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
 
                     input.close();
