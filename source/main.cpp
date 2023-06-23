@@ -245,17 +245,22 @@ int main(int argc, char* argv[])
                         return 1;
                     }
                     // searching
-                    int addresses[5]; // count of Mariko voltages
+                    int addresses[5]; // count of Erista voltages
                     addresses[4] = find_addresses(input, 1149425)[2]; // 998400
-                    cout << "Found " << "1149425" << " address: " << hex << addresses[4] << endl;
+                    cout << "Found " << "1149425" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
+
                     addresses[3] = find_addresses(input, 1149425)[1]; // 921600
-                    cout << "Found " << "1149425" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 1117534)[1]; // 844800
-                    cout << "Found " << "1117534" << " address: " << hex << addresses[2] << endl;
-                    addresses[1] = find_addresses(input, 1085642)[1]; //  768000
-                    cout << "Found " << "1085642" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 1023751)[1]; //  691200
-                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl;
+                    cout << "Found " << "1149425" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
+
+                    addresses[2] = find_addresses(input, 1117534)[0]; // 844800
+                    cout << "Found " << "1117534" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
+
+                    addresses[1] = find_addresses(input, 1085642)[0]; //  768000
+                    cout << "Found " << "1085642" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
+
+                    addresses[0] = find_addresses(input, 1023751)[0]; //  691200
+                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
+
                     input.close();
                     // changing 
                     cout << "All voltages are found, changing";
@@ -281,25 +286,35 @@ int main(int argc, char* argv[])
                     // searching
                     int addresses[10]; // count of Mariko voltages
                     addresses[9] = find_addresses(input, 1204812)[2]; // 1305600
-                    cout << "Found " << "1204812" << " address: " << hex << addresses[9] << endl;
+                    cout << "Found " << "1204812" << " address: " << hex << addresses[9] << endl; // Verified on 23.06.2023
+
                     addresses[8] = find_addresses(input, 1204812)[1]; // 1267200
-                    cout << "Found " << "1204812" << " address: " << hex << addresses[8] << endl;
-                    addresses[7] = find_addresses(input, 1163644)[1]; // 1228800
-                    cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl;
-                    addresses[6] = find_addresses(input, 1098475)[1]; //  1152000
-                    cout << "Found " << "1098475" << " address: " << hex << addresses[6] << endl;
-                    addresses[5] = find_addresses(input, 986765)[1]; //  1075200
-                    cout << "Found " << "986765" << " address: " << hex << addresses[5] << endl;
-                    addresses[4] = find_addresses(input, 940071)[1]; //  998400
-                    cout << "Found " << "940071" << " address: " << hex << addresses[4] << endl;
-                    addresses[3] = find_addresses(input, 891575)[1]; //  921600
-                    cout << "Found " << "891575" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 848830)[1]; //  844800
-                    cout << "Found " << "848830" << " address: " << hex << addresses[2] << endl;
+                    cout << "Found " << "1204812" << " address: " << hex << addresses[8] << endl; // Verified on 23.06.2023
+
+                    addresses[7] = find_addresses(input, 1163644)[2]; // 1228800
+                    cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl; // Verified on 23.06.2023
+
+                    addresses[6] = find_addresses(input, 1098475)[2]; //  1152000
+                    cout << "Found " << "1098475" << " address: " << hex << addresses[6] << endl; // Verified on 23.06.2023
+
+                    addresses[5] = find_addresses(input, 986765)[2]; //  1075200
+                    cout << "Found " << "986765" << " address: " << hex << addresses[5] << endl; // Verified on 23.06.2023
+
+                    addresses[4] = find_addresses(input, 940071)[3]; //  998400
+                    cout << "Found " << "940071" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
+
+                    addresses[3] = find_addresses(input, 891575)[2]; //  921600
+                    cout << "Found " << "891575" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
+
+                    addresses[2] = find_addresses(input, 848830)[2]; //  844800
+                    cout << "Found " << "848830" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
+
                     addresses[1] = find_addresses(input, 824214)[1]; //  768000
-                    cout << "Found " << "824214" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 801688)[1]; //  691200
-                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl;
+                    cout << "Found " << "824214" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
+
+                    addresses[0] = find_addresses(input, 801688)[6]; //  691200
+                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
+
                     input.close();
                     // changing 
                     cout << "All voltages are found, changing";
@@ -335,17 +350,23 @@ int main(int argc, char* argv[])
                     // searching
                     int addresses[6]; // count of Erista ST voltages
                     addresses[5] = find_addresses(input, 1159425)[1]; // 998400
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[5] << endl;
+                    cout << "Found " << "1159425" << " address: " << hex << addresses[5] << endl; // Verified on 23.06.2023
+
                     addresses[4] = find_addresses(input, 1159425)[0]; //  921600
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[4] << endl;
-                    addresses[3] = find_addresses(input, 1137534)[1]; //  844800
-                    cout << "Found " << "1137534" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 1095642)[1]; //  768000
-                    cout << "Found " << "1095642" << " address: " << hex << addresses[2] << endl;
-                    addresses[1] = find_addresses(input, 1069751)[1]; //  691200
-                    cout << "Found " << "1069751" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 1023751)[1]; //  614400
-                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl;
+                    cout << "Found " << "1159425" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
+
+                    addresses[3] = find_addresses(input, 1137534)[0]; //  844800
+                    cout << "Found " << "1137534" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
+
+                    addresses[2] = find_addresses(input, 1095642)[0]; //  768000
+                    cout << "Found " << "1095642" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
+
+                    addresses[1] = find_addresses(input, 1069751)[0]; //  691200
+                    cout << "Found " << "1069751" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
+
+                    addresses[0] = find_addresses(input, 1023751)[6]; //  614400
+                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
+
                     input.close();
                     // changing 
                     cout << "All voltages are found, changing";
@@ -371,22 +392,29 @@ int main(int argc, char* argv[])
                     }
                     // searching
                     int addresses[8]; // count of Mariko ST voltages
-                    addresses[7] = find_addresses(input, 1163644)[1]; // 1305600
+                    addresses[7] = find_addresses(input, 1163644)[2]; // 1305600
                     cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl;
+
                     addresses[6] = find_addresses(input, 1131060)[0]; // 1267200
                     cout << "Found " << "1131060" << " address: " << hex << addresses[6] << endl;
-                    addresses[5] = find_addresses(input, 1098475)[1]; // 1228800
+
+                    addresses[5] = find_addresses(input, 1098475)[2]; // 1228800
                     cout << "Found " << "1098475" << " address: " << hex << addresses[5] << endl;
-                    addresses[4] = find_addresses(input, 986765)[1]; //  1152000
+
+                    addresses[4] = find_addresses(input, 986765)[2]; //  1152000
                     cout << "Found " << "986765" << " address: " << hex << addresses[4] << endl;
-                    addresses[3] = find_addresses(input, 940071)[1]; //  1075200
+
+                    addresses[3] = find_addresses(input, 940071)[3]; //  1075200
                     cout << "Found " << "940071" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 891575)[1]; //  998400
+
+                    addresses[2] = find_addresses(input, 891575)[2]; //  998400
                     cout << "Found " << "891575" << " address: " << hex << addresses[2] << endl;
-                    addresses[1] = find_addresses(input, 848830)[1]; //  921600
+
+                    addresses[1] = find_addresses(input, 848830)[2]; //  921600
                     cout << "Found " << "848830" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 801688)[1]; //  844800
-                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl;
+
+                    addresses[0] = find_addresses(input, 801688)[8]; //  844800
+                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
                     input.close();
                     // changing 
                     cout << "All voltages are found, changing";
