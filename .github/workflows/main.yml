@@ -13,6 +13,7 @@ jobs:
 
     - name: update repo
       run: |
+        git config --global --add safe.directory /__w/4IFIR-configurator/4IFIR-configurator
         git submodule update --init --recursive
         
     - name: Building aio-switch-updater
