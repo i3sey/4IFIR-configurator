@@ -1,0 +1,6 @@
+.vscode
+build
+4IFIR-configurator
+*.nro
+*.nacp
+*.elf
