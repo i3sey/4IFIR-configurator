@@ -124,9 +124,9 @@ int main(int argc, char* argv[])
     socketInitializeDefault();              // Initialize sockets
     nxlinkStdio();                          // Redirect stdout and stderr over the network to nxlink
 
-    std::ifstream src("/switch/4IFIRcofigurator/backup.kip", std::ios::binary);
+    std::ifstream src("/switch/4IFIR-configurator/backup.kip", std::ios::binary);
     if (!src.good()) {
-        if (copyFile("/atmosphere/kips/loader.kip", "/switch/4IFIRcofigurator/backup.kip"))
+        if (copyFile("/atmosphere/kips/loader.kip", "/switch/4IFIR-configurator/backup.kip"))
         {
             std::cout << "loader.kip has been successfully reserved!\n\n";
             std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\nSelect your memory template:\n";
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
             std::cout << "L. Restore backup\n";
         }
         else {
-            std::cout << "ERROR (is folder /switch/4IFIRcofigurator/ exists?)\n";
+            std::cout << "ERROR (is folder /switch/4IFIR-configurator/ exists?)\n";
             curScreen = -1;
         }
         
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
             }
             else if (kDown & HidNpadButton_L) {
                 std::cout << "Restoring backup...\n";
-                copyFile("/switch/4IFIRcofigurator/backup.kip", "/atmosphere/kips/loader.kip");
+                copyFile("/switch/4IFIR-configurator/backup.kip", "/atmosphere/kips/loader.kip");
                 Clear();
                 cout << "All is ok, restart your console";
             }
@@ -224,7 +224,7 @@ int main(int argc, char* argv[])
             {
                 Clear();
                 curScreen = 4;
-                copyFile("/switch/4IFIRcofigurator/backup.kip", "/switch/4IFIRcofigurator/loader.kip");
+                copyFile("/switch/4IFIR-configurator/backup.kip", "/switch/4IFIR-configurator/loader.kip");
                 cout << "Processing " << offset << "mv, " << rev << " rev, " << memType << " memtype.\n";
 
             }
