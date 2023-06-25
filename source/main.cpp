@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
         if (copyFile("/atmosphere/kips/loader.kip", "/switch/4IFIR-configurator/backup.kip"))
         {
             std::cout << "loader.kip has been successfully reserved!\n\n";
-            std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\nSelect your memory template:\n";
+            std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\n\nSelect your memory template:\n";
             std::cout << "Y. 4IFIR base memory\n";
             std::cout << "X. 4IFIR stage memory\n";
             std::cout << "A. 4IFIR stage plus memory\n";
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
         
     }
     else {
-        std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\nSelect your memory template:\n";
+        std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\n\nSelect your memory template:\n";
         std::cout << "Y. 4IFIR base memory\n";
         std::cout << "X. 4IFIR stage memory\n";
         std::cout << "A. 4IFIR stage plus memory\n";
@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
 
                     input.close();
                     // changing 
-                    cout << "All voltages are found, changing";
+                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
                     changing(file, addresses[4], "998MHz", offset);
                     changing(file, addresses[3], "921MHz", offset);
@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
 
                     input.close();
                     // changing 
-                    cout << "All voltages are found, changing";
+                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
                     changing(file, addresses[9], "1305MHz", offset);
                     changing(file, addresses[8], "1267MHz", offset);
@@ -369,7 +369,7 @@ int main(int argc, char* argv[])
 
                     input.close();
                     // changing 
-                    cout << "All voltages are found, changing";
+                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
                     changing(file, addresses[5], "998MHz", offset);
                     changing(file, addresses[4], "921MHz", offset);
@@ -417,7 +417,7 @@ int main(int argc, char* argv[])
                     cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
                     input.close();
                     // changing 
-                    cout << "All voltages are found, changing";
+                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
                     changing(file, addresses[7], "1305MHz", offset);
                     changing(file, addresses[6], "1267MHz", offset);
