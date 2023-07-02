@@ -44,7 +44,7 @@ SOURCES		:=	source
 #INCLUDES	:=	include
 APP_TITLE   :=  4Ifir Configurator
 APP_AUTHOR  :=  i3sey
-APP_VERSION :=  0.5
+APP_VERSION :=  0.6
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
