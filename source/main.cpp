@@ -5,6 +5,7 @@
 #include <cstring>
 #include <vector>
 #include <cstdint>
+#include <cstdio>
 
 using namespace std;
 
@@ -53,7 +54,7 @@ vector<int> find_addresses(ifstream& file, int num) {
     return addresses; // возвращаем вектор найденных адресов
 }
 
-void changing(fstream& file, const int address, string clocks, int offset = 0) {
+void changing(fstream& file, const int address, int newVal) {
     // Set the position in the file to the desired location
     file.seekg(address, ios::beg);
 
@@ -81,20 +82,9 @@ void changing(fstream& file, const int address, string clocks, int offset = 0) {
 
     // Convert the byte array to a 32-bit integer (int)
     int number = 0;
-    int newVoltage;
     memcpy(&number, buffer, sizeof(number));
     cout.setf(ios::dec);
-
-    // Write the new value
-    if (offset == 0)
-    {
-        cout << "Enter new " << clocks << " voltage, default is " << number << ": " << endl;
-        cin >> newVoltage;
-    }
-    else {
-        newVoltage = number + offset;
-    };
-    file.write(reinterpret_cast<const char*>(&newVoltage), sizeof(newVoltage));
+    file.write(reinterpret_cast<const char*>(&newVal), sizeof(newVal));
 }
 
 bool copyFile(const std::string& from, const std::string& to)
@@ -129,10 +119,9 @@ int main(int argc, char* argv[])
         if (copyFile("/atmosphere/kips/loader.kip", "/switch/4IFIR-configurator/backup.kip"))
         {
             std::cout << "loader.kip has been successfully reserved!\n\n";
-            std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\n\nSelect your memory template:\n";
-            std::cout << "Y. 4IFIR base memory\n";
-            std::cout << "X. 4IFIR stage memory\n";
-            std::cout << "A. 4IFIR stage plus memory\n";
+            std::cout << "Welcome to 4IFIR GPU voltage table changer 0.6\n\nSelect desired voltages:\n";
+            std::cout << "Y. 4IFIR stock voltages\n";
+            std::cout << "X. 4IFIR stage voltages\n";
             std::cout << "L. Restore backup\n";
         }
         else {
@@ -142,16 +131,14 @@ int main(int argc, char* argv[])
         
     }
     else {
-        std::cout << "Welcome to 4IFIR GPU voltage configurator 0.5\n\nSelect your memory template:\n";
-        std::cout << "Y. 4IFIR base memory\n";
-        std::cout << "X. 4IFIR stage memory\n";
-        std::cout << "A. 4IFIR stage plus memory\n";
-        std::cout << "L. Restore backup\n";
+        std::cout << "Welcome to 4IFIR GPU voltage table changer 0.6\n\nSelect desired voltages:\n";
+            std::cout << "Y. 4IFIR stock voltages\n";
+            std::cout << "X. 4IFIR stage voltages\n";
+            std::cout << "L. Restore backup\n";
     }
 
     int memType = 0;
     int rev = 0;
-    int offset = 10000;
 
     // Main loop
     while (appletMainLoop())
@@ -169,7 +156,7 @@ int main(int argc, char* argv[])
                 memType = 1;
                 curScreen = 2;
                 std::cout << "Select your revision: \n";
-                std::cout << "X. Mariko (Oled, Lite and v2)\n";
+                std::cout << "X. Mariko (v2, Lite and Oled)\n";
                 std::cout << "Y. Erista (Old)\n";
             }
             else if (kDown & HidNpadButton_X) {
@@ -177,15 +164,7 @@ int main(int argc, char* argv[])
                 memType = 2;
                 curScreen = 2;
                 std::cout << "Select your revision: \n";
-                std::cout << "X. Mariko (Oled, Lite and v2)\n";
-                std::cout << "Y. Erista (Old)\n";
-            }
-            else if (kDown & HidNpadButton_A) {
-                Clear();
-                memType = 3;
-                curScreen = 2;
-                std::cout << "Select your revision: \n";
-                std::cout << "X. Mariko (Oled, Lite and v2)\n";
+                std::cout << "X. Mariko (v2, Lite and Oled)\n";
                 std::cout << "Y. Erista (Old)\n";
             }
             else if (kDown & HidNpadButton_L) {
@@ -202,34 +181,16 @@ int main(int argc, char* argv[])
                 Clear();
                 rev = 1;
                 curScreen = 3;
+                copyFile("/switch/4IFIR-configurator/backup.kip", "/switch/4IFIR-configurator/loader.kip");
             }
             else if (kDown & HidNpadButton_X) {
                 Clear();
                 rev = 2;
                 curScreen = 3;
+                copyFile("/switch/4IFIR-configurator/backup.kip", "/switch/4IFIR-configurator/loader.kip");
             }
         }
         else if (curScreen == 3) {
-            Clear();
-            cout << "Enter offset to all (L - -10000, R - +10000): \n";
-            cout << "\t\t" << offset;
-            if (kDown & HidNpadButton_L)
-            {
-                offset -= 10000;
-            }
-            else if (kDown & HidNpadButton_R) {
-                offset += 10000;
-            }
-            else if (kDown & HidNpadButton_A)
-            {
-                Clear();
-                curScreen = 4;
-                copyFile("/switch/4IFIR-configurator/backup.kip", "/switch/4IFIR-configurator/loader.kip");
-                cout << "Processing " << offset << "mv, " << rev << " rev, " << memType << " memtype.\n";
-
-            }
-        }
-        else if (curScreen == 4) {
             switch (memType) {
             case 1:
             {
@@ -237,99 +198,33 @@ int main(int argc, char* argv[])
                 case 1: {
                     curScreen = 5;
                     // Erista stock
-                    // Find adresses -> make array -> changing
-                    std::ifstream input( "loader.kip", std::ios::binary);
+                    std::ifstream input("loader.kip", std::ios::binary);
                     if (!input.is_open()){
                         Logger("Error opening file");
                         std::cerr << "Error opening file" << std::endl;
                         return 1;
                     }
-                    // searching
-                    int addresses[5]; // count of Erista voltages
-                    addresses[4] = find_addresses(input, 1149425)[2]; // 998400
-                    cout << "Found " << "1149425" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
-
-                    addresses[3] = find_addresses(input, 1149425)[1]; // 921600
-                    cout << "Found " << "1149425" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
-
-                    addresses[2] = find_addresses(input, 1117534)[0]; // 844800
-                    cout << "Found " << "1117534" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
-
-                    addresses[1] = find_addresses(input, 1085642)[0]; //  768000
-                    cout << "Found " << "1085642" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
-
-                    addresses[0] = find_addresses(input, 1023751)[7]; //  691200
-                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
-
+                    int trigger = find_addresses(input, 1414747459)[0] + 28;
                     input.close();
-                    // changing 
-                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[4], "998MHz", offset);
-                    changing(file, addresses[3], "921MHz", offset);
-                    changing(file, addresses[2], "844MHz", offset);
-                    changing(file, addresses[1], "768MHz", offset);
-                    changing(file, addresses[0], "691MHz", offset);
-                    file.close();
+                    changing(file, trigger, 0);
+                    input.close();
                     break;
                 }
                 case 2: {
                     curScreen = 5;
                     // Mariko stock
-                    // Find adresses -> make array -> changing
                     std::ifstream input( "loader.kip", std::ios::binary);
                     if (!input.is_open()){
                         Logger("Error opening file");
                         std::cerr << "Error opening file" << std::endl;
                         return 1;
                     }
-                    // searching
-                    int addresses[10]; // count of Mariko voltages
-                    addresses[9] = find_addresses(input, 1204812)[2]; // 1305600
-                    cout << "Found " << "1204812" << " address: " << hex << addresses[9] << endl; // Verified on 23.06.2023
-
-                    addresses[8] = find_addresses(input, 1204812)[1]; // 1267200
-                    cout << "Found " << "1204812" << " address: " << hex << addresses[8] << endl; // Verified on 23.06.2023
-
-                    addresses[7] = find_addresses(input, 1163644)[2]; // 1228800
-                    cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl; // Verified on 23.06.2023
-
-                    addresses[6] = find_addresses(input, 1098475)[2]; //  1152000
-                    cout << "Found " << "1098475" << " address: " << hex << addresses[6] << endl; // Verified on 23.06.2023
-
-                    addresses[5] = find_addresses(input, 986765)[2]; //  1075200
-                    cout << "Found " << "986765" << " address: " << hex << addresses[5] << endl; // Verified on 23.06.2023
-
-                    addresses[4] = find_addresses(input, 940071)[3]; //  998400
-                    cout << "Found " << "940071" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
-
-                    addresses[3] = find_addresses(input, 891575)[2]; //  921600
-                    cout << "Found " << "891575" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
-
-                    addresses[2] = find_addresses(input, 848830)[2]; //  844800
-                    cout << "Found " << "848830" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
-
-                    addresses[1] = find_addresses(input, 824214)[1]; //  768000
-                    cout << "Found " << "824214" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
-
-                    addresses[0] = find_addresses(input, 801688)[6]; //  691200
-                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
-
+                    int trigger = find_addresses(input, 1414747459)[0] + 44;
                     input.close();
-                    // changing 
-                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[9], "1305MHz", offset);
-                    changing(file, addresses[8], "1267MHz", offset);
-                    changing(file, addresses[7], "1228MHz", offset);
-                    changing(file, addresses[6], "1152MHz", offset);
-                    changing(file, addresses[5], "1075MHz", offset);
-                    changing(file, addresses[4], "998MHz", offset);
-                    changing(file, addresses[3], "921MHz", offset);
-                    changing(file, addresses[2], "844MHz", offset);
-                    changing(file, addresses[1], "768MHz", offset);
-                    changing(file, addresses[0], "691MHz", offset);
-                    file.close();
+                    changing(file, trigger, 0);
+                    input.close();
                     break;
                 }
                 }
@@ -340,179 +235,33 @@ int main(int argc, char* argv[])
                 case 1: {
                     curScreen = 5;
                     // Erista ST
-                    // Find adresses -> make array -> changing
                     std::ifstream input( "loader.kip", std::ios::binary);
                     if (!input.is_open()){
                         Logger("Error opening file");
                         std::cerr << "Error opening file" << std::endl;
                         return 1;
                     }
-                    // searching
-                    int addresses[6]; // count of Erista ST voltages
-                    addresses[5] = find_addresses(input, 1159425)[1]; // 998400
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[5] << endl; // Verified on 23.06.2023
-
-                    addresses[4] = find_addresses(input, 1159425)[0]; //  921600
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[4] << endl; // Verified on 23.06.2023
-
-                    addresses[3] = find_addresses(input, 1137534)[0]; //  844800
-                    cout << "Found " << "1137534" << " address: " << hex << addresses[3] << endl; // Verified on 23.06.2023
-
-                    addresses[2] = find_addresses(input, 1095642)[0]; //  768000
-                    cout << "Found " << "1095642" << " address: " << hex << addresses[2] << endl; // Verified on 23.06.2023
-
-                    addresses[1] = find_addresses(input, 1069751)[0]; //  691200
-                    cout << "Found " << "1069751" << " address: " << hex << addresses[1] << endl; // Verified on 23.06.2023
-
-                    addresses[0] = find_addresses(input, 1023751)[6]; //  614400
-                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
-
+                    int trigger = find_addresses(input, 1414747459)[0] + 28;
                     input.close();
-                    // changing 
-                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[5], "998MHz", offset);
-                    changing(file, addresses[4], "921MHz", offset);
-                    changing(file, addresses[3], "844MHz", offset);
-                    changing(file, addresses[2], "768MHz", offset);
-                    changing(file, addresses[1], "691MHz", offset);
-                    changing(file, addresses[0], "614MHz", offset);
-                    file.close();
+                    changing(file, trigger, 1);
+                    input.close();
                     break;
                 }
                 case 2: {
                     curScreen = 5;
                     // Mariko ST
-                    // Find adresses -> make array -> changing
                     std::ifstream input( "loader.kip", std::ios::binary);
                     if (!input.is_open()){
                         Logger("Error opening file");
                         std::cerr << "Error opening file" << std::endl;
                         return 1;
                     }
-                    // searching
-                    int addresses[8]; // count of Mariko ST voltages
-                    addresses[7] = find_addresses(input, 1163644)[2]; // 1305600
-                    cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl;
-
-                    addresses[6] = find_addresses(input, 1131060)[0]; // 1267200
-                    cout << "Found " << "1131060" << " address: " << hex << addresses[6] << endl;
-
-                    addresses[5] = find_addresses(input, 1098475)[2]; // 1228800
-                    cout << "Found " << "1098475" << " address: " << hex << addresses[5] << endl;
-
-                    addresses[4] = find_addresses(input, 986765)[2]; //  1152000
-                    cout << "Found " << "986765" << " address: " << hex << addresses[4] << endl;
-
-                    addresses[3] = find_addresses(input, 940071)[3]; //  1075200
-                    cout << "Found " << "940071" << " address: " << hex << addresses[3] << endl;
-
-                    addresses[2] = find_addresses(input, 891575)[2]; //  998400
-                    cout << "Found " << "891575" << " address: " << hex << addresses[2] << endl;
-
-                    addresses[1] = find_addresses(input, 848830)[2]; //  921600
-                    cout << "Found " << "848830" << " address: " << hex << addresses[1] << endl;
-
-                    addresses[0] = find_addresses(input, 801688)[8]; //  844800
-                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl; // "Optimized", non-verifed yet
+                    int trigger = find_addresses(input, 1414747459)[0] + 44;
                     input.close();
-                    // changing 
-                    cout << "All voltages are found, changing...\n";
                     fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[7], "1305MHz", offset);
-                    changing(file, addresses[6], "1267MHz", offset);
-                    changing(file, addresses[5], "1228MHz", offset);
-                    changing(file, addresses[4], "1152MHz", offset);
-                    changing(file, addresses[3], "1075MHz", offset);
-                    changing(file, addresses[2], "998MHz", offset);
-                    changing(file, addresses[1], "921MHz", offset);
-                    changing(file, addresses[0], "844MHz", offset);
-                    file.close();
-                    break;
-                }
-                }
-                break;
-            }
-            case 3: {
-                switch (rev) {
-                case 1: {
-                    curScreen = 5;
-                    // Erista ST+
-                    // Find adresses -> make array -> changing
-                    std::ifstream input( "loader.kip", std::ios::binary);
-                    if (!input.is_open()){
-                        Logger("Error opening file");
-                        std::cerr << "Error opening file" << std::endl;
-                        return 1;
-                    }
-                    // searching
-                    int addresses[6]; // count of Erista ST voltages
-                    addresses[5] = find_addresses(input, 1159425)[1]; // 998400
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[5] << endl;
-                    addresses[4] = find_addresses(input, 1159425)[0]; //  921600
-                    cout << "Found " << "1159425" << " address: " << hex << addresses[4] << endl;
-                    addresses[3] = find_addresses(input, 1137534)[1]; //  844800
-                    cout << "Found " << "1137534" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 1095642)[1]; //  768000
-                    cout << "Found " << "1095642" << " address: " << hex << addresses[2] << endl;
-                    addresses[1] = find_addresses(input, 1069751)[1]; //  691200
-                    cout << "Found " << "1069751" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 1023751)[1]; //  614400
-                    cout << "Found " << "1023751" << " address: " << hex << addresses[0] << endl << endl;
+                    changing(file, trigger, 1);
                     input.close();
-                    // changing 
-                    cout << "All voltages are found, changing";
-                    fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[5], "998MHz", offset);
-                    changing(file, addresses[4], "921MHz", offset);
-                    changing(file, addresses[3], "844MHz", offset);
-                    changing(file, addresses[2], "768MHz", offset);
-                    changing(file, addresses[1], "691MHz", offset);
-                    changing(file, addresses[0], "614MHz", offset);
-                    file.close();
-                    break;
-                }
-                case 2: {
-                    curScreen = 5;
-                    // Mariko ST+
-                    // Find adresses -> make array -> changing
-                    std::ifstream input( "loader.kip", std::ios::binary);
-                    if (!input.is_open()){
-                        Logger("Error opening file");
-                        std::cerr << "Error opening file" << std::endl;
-                        return 1;
-                    }
-                    // searching
-                    int addresses[8]; // count of Mariko ST voltages
-                    addresses[7] = find_addresses(input, 1163644)[1]; // 1305600
-                    cout << "Found " << "1163644" << " address: " << hex << addresses[7] << endl;
-                    addresses[6] = find_addresses(input, 1131060)[0]; // 1267200
-                    cout << "Found " << "1131060" << " address: " << hex << addresses[6] << endl;
-                    addresses[5] = find_addresses(input, 1098475)[1]; // 1228800
-                    cout << "Found " << "1098475" << " address: " << hex << addresses[5] << endl;
-                    addresses[4] = find_addresses(input, 986765)[1]; //  1152000
-                    cout << "Found " << "986765" << " address: " << hex << addresses[4] << endl;
-                    addresses[3] = find_addresses(input, 940071)[1]; //  1075200
-                    cout << "Found " << "940071" << " address: " << hex << addresses[3] << endl;
-                    addresses[2] = find_addresses(input, 891575)[1]; //  998400
-                    cout << "Found " << "891575" << " address: " << hex << addresses[2] << endl;
-                    addresses[1] = find_addresses(input, 848830)[1]; //  921600
-                    cout << "Found " << "848830" << " address: " << hex << addresses[1] << endl;
-                    addresses[0] = find_addresses(input, 801688)[1]; //  844800
-                    cout << "Found " << "801688" << " address: " << hex << addresses[0] << endl << endl;
-                    input.close();
-                    // changing 
-                    cout << "All voltages are found, changing";
-                    fstream file("loader.kip", ios::binary | ios::in | ios::out);
-                    changing(file, addresses[7], "1305MHz", offset);
-                    changing(file, addresses[6], "1267MHz", offset);
-                    changing(file, addresses[5], "1228MHz", offset);
-                    changing(file, addresses[4], "1152MHz", offset);
-                    changing(file, addresses[3], "1075MHz", offset);
-                    changing(file, addresses[2], "998MHz", offset);
-                    changing(file, addresses[1], "921MHz", offset);
-                    changing(file, addresses[0], "844MHz", offset);
-                    file.close();
                     break;
                 }
                 }
@@ -522,7 +271,8 @@ int main(int argc, char* argv[])
         } else if (curScreen == 5){
             cout << "\nDone, moving loader.kip...\n";
             copyFile("loader.kip", "/atmosphere/kips/loader.kip");
-            // Clear();
+            remove("loader.kip");
+            Clear();
             cout << "All is ok, restart your console";
             curScreen = -2;
         }
